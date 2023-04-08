@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <math.h>
 
-#define MAX_WORD_LENGHT	28		/* Maximum word length */
+#define MAX_WORD_LENGTH	28		/* Maximum word length */
 #define HASH_SIZE		37987	/* Prime number */
 #define BASE			128
 
@@ -12,7 +12,7 @@
 
 typedef struct _element
 {
-	char			word[MAX_WORD_LENGHT];
+	char			word[MAX_WORD_LENGTH];
 	struct _element* next;
 
 } Element;

@@ -2,8 +2,15 @@
 
 static void on_search_changed(GtkSearchEntry *entry, gpointer user_data)
 {
-	const gchar *text = gtk_editable_get_text(GTK_EDITABLE(entry));
-	g_print("%s\n", text);
+	AppData *data;
+
+	data = (AppData *)user_data;
+
+	/*if (data->search_text)
+		free(data->search_text);*/
+
+	strcpy(data->search_text, gtk_editable_get_text(GTK_EDITABLE(entry)));
+	printf("%s\n", data->search_text);
 }
 
 static void on_search_button_clicked(GtkButton *button, gpointer user_data)
@@ -53,8 +60,8 @@ static void activate_cb(GtkApplication *app, gpointer user_data)
 	gtk_widget_set_hexpand(entry, TRUE);
 	gtk_box_append(GTK_BOX(box), entry);
 
-	g_signal_connect(entry, "search-changed", G_CALLBACK(on_search_changed),
-		     						NULL);
+	g_signal_connect(entry, "search-changed", G_CALLBACK(on_search_changed), user_data);
+
 	g_signal_connect(search_button, "clicked",
 	G_CALLBACK(on_search_button_clicked),
 		     		search_bar);
@@ -65,13 +72,11 @@ static void activate_cb(GtkApplication *app, gpointer user_data)
 					       			window);
 }
 
-int search_window(int argc, char *argv[])
+int search_window(int argc, char *argv[], AppData *data)
 {
-	GtkApplication *app;
+    data->app = gtk_application_new("org.gtk.Example.GtkSearchBar",
+                                     G_APPLICATION_DEFAULT_FLAGS);
+    g_signal_connect(data->app, "activate", G_CALLBACK(activate_cb), data);
 
-	app = gtk_application_new("org.gtk.Example.GtkSearchBar",
-				G_APPLICATION_DEFAULT_FLAGS);
-	g_signal_connect(app, "activate", G_CALLBACK(activate_cb), NULL);
-
-	return g_application_run(G_APPLICATION(app), argc, argv);
+    return g_application_run(G_APPLICATION(data->app), argc, argv);
 }

@@ -20,7 +20,7 @@ void loadDictionaryFromFile(HashTable* hashTab, const char* dictionaryFileName)
 
 	if (fp != NULL)
 	{
-		char word[MAX_WORD_LENGHT];
+		char word[MAX_WORD_LENGTH];
 		while (fscanf(fp, "%s", word) == 1)
 			insertElementToHashTable(hashTab, word);
 		fclose(fp);
