@@ -1,15 +1,20 @@
-CC = gcc
-CFLAGS = $(shell pkg-config --cflags gtk4)
-LDFLAGS = $(shell pkg-config --libs gtk4)
-TARGET = search-bar
-SOURCE = search-bar.c
+CC ?= gcc
+PKGCONFIG = $(shell which pkg-config)
+CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4)
+LIBS = $(shell $(PKGCONFIG) --libs gtk4)
 
-all: $(TARGET)
+SRC = search-bar.c gui.c
 
-$(TARGET): $(SOURCE)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SOURCE) $(LDFLAGS)
+OBJS = $(SRC:.c=.o)
+
+all: search-bar.out
+
+%.o: %.c
+	$(CC) -c -o $(@F) $(CFLAGS) $<
+
+search-bar.out: $(OBJS)
+	$(CC) -o $(@F) $(OBJS) $(LIBS)
 
 clean:
-	rm -f $(TARGET)
-
-.PHONY: all clean
+	rm -f $(OBJS)
+	rm -f exampleapp
