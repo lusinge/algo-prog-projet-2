@@ -1,6 +1,6 @@
 /*
- * This code is in the major part taken from
- * https://gitlab.gnome.org/GNOME/gtk/-/blob/main/examples/search-bar.c
+ * This code is in the major part taken and inspired from
+ * https://gitlab.gnome.org/GNOME/gtk/-/blob/main/examples/
  * I added a button to make the whole thing more intuitive.
  */
 
@@ -18,6 +18,9 @@ int main(int argc, char *argv[])
 
 	data.hashTab = (HashTable*) malloc(sizeof(HashTable));
 	initializeHashTable(data.hashTab);
+	loadDictionaryFromFile(data.hashTab, dictionaryFileName);
+
+	dictionaryFileName = "francais.txt";
 	loadDictionaryFromFile(data.hashTab, dictionaryFileName);
 
 	search_window(argc, argv, &data);

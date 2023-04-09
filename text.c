@@ -16,5 +16,5 @@ char* cut_str(char* str)
 
 bool has_prefix(char* word, char* prefix)
 {
-    return strncmp(word, prefix, strlen(prefix)) == 0;
+	return strncmp(word, prefix, strlen(prefix)) == 0;
 }

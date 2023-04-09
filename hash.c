@@ -146,3 +146,8 @@ void findTopThreeWordsWithPrefix(HashTable* hashTab, const char* prefix, TopWord
         }
     }
 }
+
+void updateLocalDictionnary(char* word, const char* dictionaryFileName)
+{
+
+}
