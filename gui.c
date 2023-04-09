@@ -64,7 +64,7 @@ static void on_row_activated(GtkListBox *list_box, GtkListBoxRow *row, gpointer 
 
 	insertElementToHashTable(data->hashTab, word);
 	updateLocalDictionnary(word, "mots_courants.txt");
-	printf("la fréquence de %s a été augmenée.\n", word);
+	printf("la fréquence de %s a été augmentée.\n", word);
 	g_strfreev(split_text);
 }
 
