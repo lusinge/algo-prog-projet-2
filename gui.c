@@ -63,7 +63,7 @@ static void on_row_activated(GtkListBox *list_box, GtkListBoxRow *row, gpointer 
 	gchar *word = split_text[0];
 
 	insertElementToHashTable(data->hashTab, word);
-	updateLocalDictionnary(word);
+	updateLocalDictionnary(word, "mots_courants.txt");
 	printf("la fréquence de %s a été augmenée.\n", word);
 	g_strfreev(split_text);
 }
@@ -139,9 +139,4 @@ int search_window(int argc, char *argv[], AppData *data)
     g_signal_connect(data->app, "activate", G_CALLBACK(activate_cb), data);
 
     return g_application_run(G_APPLICATION(data->app), argc, argv);
-}
-
-void updateLocalDictionnary(char* word)
-{
-
 }

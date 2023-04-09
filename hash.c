@@ -154,9 +154,9 @@ void updateLocalDictionnary(char* word, const char* dictionaryFileName)
 
 	if (fp != NULL)
 	{
-		fprintf(fp, word);
+		fprintf(fp,"%s\n", word);
 		fclose(fp);
 	}
 	else
-		printf("File not found.");)
+		printf("File not found.");
 }
