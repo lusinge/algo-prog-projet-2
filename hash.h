@@ -28,7 +28,13 @@ typedef struct _hashTable
 
 } HashTable;
 
+typedef struct {
+	char word[MAX_WORD_LENGTH];
+	unsigned int frq;
+} TopWord;
+
 void loadDictionaryFromFile(HashTable* hashTab, const char* dictionaryFileName);
 void insertElementToHashTable(HashTable* hashTab, char* word);
 void initializeHashTable(HashTable* hashTab);
 bool checkExistenceWordInDictionary(HashTable* hashTab, char* word);
+void findTopThreeWordsWithPrefix(HashTable* hashTab, const char* prefix, TopWord topThreeWords[3]);

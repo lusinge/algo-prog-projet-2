@@ -47,17 +47,48 @@ unsigned long getHashValue(char* string)
 
 void insertElementToHashTable(HashTable* hashTab, char* word)
 {
-	hashTab->nbElements++;
-	unsigned long	i = getHashValue(word);
-	Element* elem = (Element*)malloc(sizeof(Element));
-	strcpy(elem->word, word);
-	elem->frq = 0;
+    unsigned long i = getHashValue(word);
+    Element* elem = hashTab->Elements[i];
+    Element* prev = NULL;
+    bool found = false;
 
-	if (hashTab->Elements[i] == NULL)
-		hashTab->nbOccupiedEntries++;
+    // Check if the word is already in the hash table
+    while (!found && elem != NULL)
+    {
+        found = (strcmp(word, elem->word) == 0);
+        if (!found)
+        {
+            prev = elem;
+            elem = elem->next;
+        }
+    }
 
-	elem->next = hashTab->Elements[i];
-	hashTab->Elements[i] = elem;
+    if (found)
+    {
+        // Increment the frequency if the word is found
+        elem->frq++;
+    }
+    else
+    {
+        // If not found, create a new element and add it to the hash table
+        hashTab->nbElements++;
+        Element* newElem = (Element*)malloc(sizeof(Element));
+        strcpy(newElem->word, word);
+        newElem->frq = 1;
+        newElem->next = NULL;
+
+        if (prev == NULL)
+        {
+            // If this is the first element in the linked list
+            hashTab->Elements[i] = newElem;
+            hashTab->nbOccupiedEntries++;
+        }
+        else
+        {
+            // Add the new element at the end of the linked list
+            prev->next = newElem;
+        }
+    }
 }
 
 bool checkExistenceWordInDictionary(HashTable* hashTab, char* word)
@@ -75,41 +106,43 @@ bool checkExistenceWordInDictionary(HashTable* hashTab, char* word)
 	return found;
 }
 
-void inc_wrd_frq(HashTable* hashTab, char* word)
+void findTopThreeWordsWithPrefix(HashTable* hashTab, const char* prefix, TopWord topThreeWords[3])
 {
-	unsigned long hashValue;
-	Element* elem;
-	bool found;
+    if (!hashTab || !prefix || !topThreeWords) {
+        return;
+    }
 
-	hashValue = getHashValue(word);
-	elem =  hashTab->Elements[hashValue];
-	found = false;
+    size_t prefixLength = strlen(prefix);
 
-	/*Checking if not in collisions*/
-	while (!found && elem != NULL)
-	{
-		found = (strcmp(word, elem->word) == 0);
-		elem = elem->next;
-	}
+    // Initialize topThreeWords array
+    for (int i = 0; i < 3; ++i) {
+        topThreeWords[i].word[0] = '\0';
+        topThreeWords[i].frq = 0;
+    }
 
-	if (found)
-		elem->frq++;
-}
+    for (unsigned int i = 0; i < hashTab->size; ++i) {
+        Element* currentElement = hashTab->Elements[i];
 
-char** most_n_frqnt(HashTable* hashTab, char* word, int n)
-{
-	char ch;
-	char** frqnt_wrd_list;
-	unsigned int i;
+        while (currentElement != NULL) {
+            if (strncmp(currentElement->word, prefix, prefixLength) == 0) {
+                int j = 0;
+                while (j < 3 && currentElement->frq <= topThreeWords[j].frq) {
+                    j++;
+                }
 
-	frqnt_wrd_list = (char**) malloc(sizeof(char*) * n);
+                if (j < 3) {
+                    // Shift lower frequency words to the right
+                    for (int k = 2; k > j; --k) {
+                        topThreeWords[k] = topThreeWords[k - 1];
+                    }
 
-	for (i = 0; i < n; i++) {
-		frqnt_wrd_list[i] = (char*) malloc(sizeof(char)
-					* MAX_WORD_LENGTH);
-	}
+                    // Insert the new word
+                    strncpy(topThreeWords[j].word, currentElement->word, MAX_WORD_LENGTH);
+                    topThreeWords[j].frq = currentElement->frq;
+                }
+            }
 
-	for(ch = 'a'; ch <= 'z'; ch++) {
-		printf("%c ", ch);
-	}
+            currentElement = currentElement->next;
+        }
+    }
 }

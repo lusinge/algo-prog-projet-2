@@ -1,5 +1,24 @@
 #include "gui.h"
 
+static void update_list_box(GtkListBox *list_box, TopWord topThreeWords[3]) {
+    // First, remove all children (old suggestions)
+    GList *children, *iter;
+    children = gtk_container_get_children(GTK_CONTAINER(list_box));
+    for (iter = children; iter != NULL; iter = g_list_next(iter)) {
+        gtk_widget_destroy(GTK_WIDGET(iter->data));
+    }
+    g_list_free(children);
+
+    // Add new suggestions to the list box
+    for (int i = 0; i < 3; ++i) {
+        if (topThreeWords[i].frq > 0) {
+            GtkWidget *label = gtk_label_new(topThreeWords[i].word);
+            gtk_list_box_insert(list_box, label, -1);
+            gtk_widget_show(label);
+        }
+    }
+}
+
 static void on_search_changed(GtkSearchEntry *entry, gpointer user_data)
 {
 	AppData *data;
@@ -9,10 +28,17 @@ static void on_search_changed(GtkSearchEntry *entry, gpointer user_data)
 	strcpy(data->search_text,
 cut_str((char*) gtk_editable_get_text(GTK_EDITABLE(entry))));
 
-	if (checkExistenceWordInDictionary(data->hashTab, data->search_text)) {
-		printf("%s\n", data->search_text);
-		inc_wrd_frq(data->hashTab, data->search_text);
+	printf("%s :\n", data->search_text);
+
+	TopWord topThreeWords[3];
+	findTopThreeWordsWithPrefix(data->hashTab, data->search_text, topThreeWords);
+
+	for (int i = 0; i < 3; ++i) {
+		if (topThreeWords[i].frq > 0) {
+		    printf("\t> %s (fréquence : %u)\n", topThreeWords[i].word, topThreeWords[i].frq);
+		}
 	}
+
 }
 
 static void on_search_button_clicked(GtkButton *button, gpointer user_data)

@@ -10,11 +10,15 @@ int main(int argc, char *argv[])
 {
 	AppData data;
 	const char* dictionaryFileName;
+	char** suggestions;
+	unsigned int n;
+	unsigned int i;
 
 	dictionaryFileName = "mots_courants.txt";
 
 	data.hashTab = (HashTable*) malloc(sizeof(HashTable));
 	initializeHashTable(data.hashTab);
+	loadDictionaryFromFile(data.hashTab, dictionaryFileName);
 
 	search_window(argc, argv, &data);
 

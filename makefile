@@ -1,9 +1,9 @@
 CC ?= gcc
 PKGCONFIG = $(shell which pkg-config)
-CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4)
+CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4) -g
 LIBS = $(shell $(PKGCONFIG) --libs gtk4) -lm -g
 
-SRC = search-bar.c gui.c hash.c
+SRC = search-bar.c gui.c hash.c text.c
 
 OBJS = $(SRC:.c=.o)
 
