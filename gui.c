@@ -78,6 +78,7 @@ static void activate_cb(GtkApplication *app, gpointer user_data)
 	GtkWidget *entry;
 	GtkWidget *header_bar;
 	GtkWidget *search_button;
+	GtkWidget *plus_button;
 
 	/*Making a blank window*/
 	window = gtk_application_window_new(app);
@@ -90,6 +91,12 @@ static void activate_cb(GtkApplication *app, gpointer user_data)
 	search_button = gtk_button_new_from_icon_name("system-search-symbolic");
 	gtk_widget_set_valign(search_button, GTK_ALIGN_CENTER);
 	gtk_header_bar_pack_start(GTK_HEADER_BAR(header_bar), search_button);
+
+	/*Adding a pretty + button to add a word*/
+	plus_button = gtk_button_new_from_icon_name("value-increase-symbolic");
+	gtk_widget_set_valign(plus_button, GTK_ALIGN_CENTER);
+	gtk_header_bar_pack_start(GTK_HEADER_BAR(header_bar), plus_button);
+
 
 	/*Adding a search bar*/
 	search_bar = gtk_search_bar_new();
