@@ -5,14 +5,15 @@
 #include <math.h>
 
 #define MAX_WORD_LENGTH	28		/* Maximum word length */
-#define HASH_SIZE		37987	/* Prime number */
-#define BASE			128
+#define HASH_SIZE 37987	/* Prime number */
+#define BASE 128
 
 
 
 typedef struct _element
 {
-	char			word[MAX_WORD_LENGTH];
+	char word[MAX_WORD_LENGTH];
+	unsigned int frq;
 	struct _element* next;
 
 } Element;
@@ -20,10 +21,10 @@ typedef struct _element
 typedef struct _hashTable
 {
 
-	unsigned int	size;
-	unsigned int	nbOccupiedEntries;
-	unsigned int	nbElements;
-	Element**		Elements;
+	unsigned int size;
+	unsigned int nbOccupiedEntries;
+	unsigned int nbElements;
+	Element** Elements;
 
 } HashTable;
 

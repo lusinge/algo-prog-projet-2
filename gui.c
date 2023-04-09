@@ -6,11 +6,13 @@ static void on_search_changed(GtkSearchEntry *entry, gpointer user_data)
 
 	data = (AppData *)user_data;
 
-	/*if (data->search_text)
-		free(data->search_text);*/
+	strcpy(data->search_text,
+cut_str((char*) gtk_editable_get_text(GTK_EDITABLE(entry))));
 
-	strcpy(data->search_text, gtk_editable_get_text(GTK_EDITABLE(entry)));
-	printf("%s\n", data->search_text);
+	if (checkExistenceWordInDictionary(data->hashTab, data->search_text)) {
+		printf("%s\n", data->search_text);
+		inc_wrd_frq(data->hashTab, data->search_text);
+	}
 }
 
 static void on_search_button_clicked(GtkButton *button, gpointer user_data)
@@ -60,7 +62,8 @@ static void activate_cb(GtkApplication *app, gpointer user_data)
 	gtk_widget_set_hexpand(entry, TRUE);
 	gtk_box_append(GTK_BOX(box), entry);
 
-	g_signal_connect(entry, "search-changed", G_CALLBACK(on_search_changed), user_data);
+	g_signal_connect(entry, "search-changed", G_CALLBACK(on_search_changed),
+			 					user_data);
 
 	g_signal_connect(search_button, "clicked",
 	G_CALLBACK(on_search_button_clicked),

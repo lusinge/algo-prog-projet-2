@@ -36,10 +36,12 @@ unsigned long getHashValue(char* string)
 
 	while ((*string) != '\0')
 	{
-		hashValue += hashValue % HASH_SIZE + ((*string) * (int)pow(BASE, i)) % HASH_SIZE;
+		hashValue += hashValue % HASH_SIZE + ((*string)
+			* (int)pow(BASE, i)) % HASH_SIZE;
 		i++;
 		string++;
 	}
+
 	return hashValue % HASH_SIZE;
 }
 
@@ -49,6 +51,7 @@ void insertElementToHashTable(HashTable* hashTab, char* word)
 	unsigned long	i = getHashValue(word);
 	Element* elem = (Element*)malloc(sizeof(Element));
 	strcpy(elem->word, word);
+	elem->frq = 0;
 
 	if (hashTab->Elements[i] == NULL)
 		hashTab->nbOccupiedEntries++;
@@ -59,15 +62,54 @@ void insertElementToHashTable(HashTable* hashTab, char* word)
 
 bool checkExistenceWordInDictionary(HashTable* hashTab, char* word)
 {
-	unsigned long	hashValue = getHashValue(word);
+	unsigned long hashValue = getHashValue(word);
 	Element* elem = hashTab->Elements[hashValue];
-	bool		found = 0;
+	bool found = false;
 
-	while (found == 0 && elem != NULL)
+	while (!found && elem != NULL)
 	{
 		found = (strcmp(word, elem->word) == 0);
 		elem = elem->next;
 	}
+
 	return found;
 }
 
+void inc_wrd_frq(HashTable* hashTab, char* word)
+{
+	unsigned long hashValue;
+	Element* elem;
+	bool found;
+
+	hashValue = getHashValue(word);
+	elem =  hashTab->Elements[hashValue];
+	found = false;
+
+	/*Checking if not in collisions*/
+	while (!found && elem != NULL)
+	{
+		found = (strcmp(word, elem->word) == 0);
+		elem = elem->next;
+	}
+
+	if (found)
+		elem->frq++;
+}
+
+char** most_n_frqnt(HashTable* hashTab, char* word, int n)
+{
+	char ch;
+	char** frqnt_wrd_list;
+	unsigned int i;
+
+	frqnt_wrd_list = (char**) malloc(sizeof(char*) * n);
+
+	for (i = 0; i < n; i++) {
+		frqnt_wrd_list[i] = (char*) malloc(sizeof(char)
+					* MAX_WORD_LENGTH);
+	}
+
+	for(ch = 'a'; ch <= 'z'; ch++) {
+		printf("%c ", ch);
+	}
+}
