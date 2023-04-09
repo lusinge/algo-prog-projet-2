@@ -149,5 +149,14 @@ void findTopThreeWordsWithPrefix(HashTable* hashTab, const char* prefix, TopWord
 
 void updateLocalDictionnary(char* word, const char* dictionaryFileName)
 {
+	FILE* fp;
+	fp = fopen(dictionaryFileName, "a");
 
+	if (fp != NULL)
+	{
+		fprintf(fp, word);
+		fclose(fp);
+	}
+	else
+		printf("File not found.");)
 }
