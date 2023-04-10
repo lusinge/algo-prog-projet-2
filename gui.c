@@ -216,7 +216,7 @@ static void activate_cb(GtkApplication *app, gpointer user_data)
 int search_window(int argc, char *argv[], AppData *data)
 {
 	// Create a new GtkApplication
-	data->app = gtk_application_new("org.gtk.Example.GtkSearchBar", G_APPLICATION_DEFAULT_FLAGS);
+	data->app = gtk_application_new("org.gtk.Example.GtkSearchBar", 0);
 	// Connect the activate signal to the activate_cb function
 	g_signal_connect(data->app, "activate", G_CALLBACK(activate_cb), data);
 	// Run the GtkApplication and return its status code
