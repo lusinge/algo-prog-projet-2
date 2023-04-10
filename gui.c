@@ -26,6 +26,31 @@ static void on_add_word_dialog_response(GtkDialog *dialog, gint response_id, gpo
 	gtk_window_destroy(GTK_WINDOW(dialog));
 }
 
+// This function is called when the user responds to the "Remove a word" dialog
+static void on_remove_word_dialog_response(GtkDialog *dialog, gint response_id, gpointer user_data)
+{
+	// Get a pointer to the application data
+	AppData *data;
+	// Declare a buffer for the entered word
+	char word[MAX_WORD_LENGTH];
+
+	// If the user clicked OK
+	if (response_id == GTK_RESPONSE_OK) {
+		// Cast the user_data pointer to AppData*
+		data = (AppData *)user_data;
+		// Get the word_entry widget from the dialog's user data
+		GtkWidget *entry = g_object_get_data(G_OBJECT(dialog), "word_entry");
+		// Copy the text from the widget into the buffer
+		strcpy(word, cut_str((char *) gtk_editable_get_text(GTK_EDITABLE(entry))));
+		// Insert the word into the hash table and update the local dictionary
+		removeLocalDictionnary(word, "mots_courants.txt");
+		printf("Supprimé: %s\n", word);
+	}
+
+	// Close the dialog
+	gtk_window_destroy(GTK_WINDOW(dialog));
+}
+
 // This function displays a "Enter a word" dialog
 static void show_add_word_dialog(GtkWidget *parent, gpointer user_data)
 {
@@ -53,6 +78,38 @@ static void show_add_word_dialog(GtkWidget *parent, gpointer user_data)
 	g_object_set_data(G_OBJECT(dialog), "word_entry", entry);
 	// Connect the response signal to the on_add_word_dialog_response function
 	g_signal_connect(dialog, "response", G_CALLBACK(on_add_word_dialog_response), data);
+
+	// Show the dialog
+	gtk_window_present(GTK_WINDOW(dialog));
+}
+
+// This function displays a "Remove a word" dialog
+static void show_remove_word_dialog(GtkWidget *parent, gpointer user_data)
+{
+	AppData *data = (AppData *)user_data;
+	// Declare the widgets for the dialog
+	GtkWidget *dialog, *content_area, *entry;
+
+	// Create the dialog
+	dialog = gtk_dialog_new_with_buttons("Suppression",
+		  GTK_WINDOW(parent),
+		  GTK_DIALOG_MODAL | GTK_DIALOG_USE_HEADER_BAR,
+		  "_OK",
+		  GTK_RESPONSE_OK,
+		  "_Cancel",
+		  GTK_RESPONSE_CANCEL,
+		  NULL);
+
+	// Get the content area of the dialog
+	content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+	// Create an entry widget
+	entry = gtk_entry_new();
+	// Add the entry widget to the content area
+	gtk_box_append(GTK_BOX(content_area), entry);
+	// Store the entry widget in the dialog's user data
+	g_object_set_data(G_OBJECT(dialog), "word_entry", entry);
+	// Connect the response signal to the on_remove_word_dialog_response function
+	g_signal_connect(dialog, "response", G_CALLBACK(on_remove_word_dialog_response), data);
 
 	// Show the dialog
 	gtk_window_present(GTK_WINDOW(dialog));
@@ -149,12 +206,13 @@ static void activate_cb(GtkApplication *app, gpointer user_data)
 	GtkWidget *header_bar;
 	GtkWidget *search_button;
 	GtkWidget *plus_button;
+	GtkWidget *minus_button;
 
 	// Create the application window
 	window = gtk_application_window_new(app);
 	gtk_window_present(GTK_WINDOW(window));
 
- // Add a header bar to the window
+	// Add a header bar to the window
 	header_bar = gtk_header_bar_new();
 	gtk_window_set_titlebar(GTK_WINDOW(window), header_bar);
 
@@ -168,6 +226,12 @@ static void activate_cb(GtkApplication *app, gpointer user_data)
 	gtk_widget_set_valign(plus_button, GTK_ALIGN_CENTER);
 	gtk_header_bar_pack_start(GTK_HEADER_BAR(header_bar), plus_button);
 	g_signal_connect_swapped(plus_button, "clicked", G_CALLBACK(show_add_word_dialog), window);
+	
+	// Add a minus button to the header bar for removing a new word
+	minus_button = gtk_button_new_from_icon_name("value-decrease-symbolic");
+	gtk_widget_set_valign(minus_button, GTK_ALIGN_CENTER);
+	gtk_header_bar_pack_start(GTK_HEADER_BAR(header_bar), minus_button);
+	g_signal_connect_swapped(minus_button, "clicked", G_CALLBACK(show_remove_word_dialog), window);
 
 	// Add a search bar to the window
 	search_bar = gtk_search_bar_new();
@@ -222,3 +286,5 @@ int search_window(int argc, char *argv[], AppData *data)
 	// Run the GtkApplication and return its status code
 	return g_application_run(G_APPLICATION(data->app), argc, argv);
 }
+
+void removeLocalDictionnary(char* word, char* file_name){}
