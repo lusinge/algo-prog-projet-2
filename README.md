@@ -21,17 +21,18 @@ J'ai (Lucien) toujours voulu essayé de faire une application GTK, donc j'ai sau
 
 ## Installation
 1. installer les dépendances GTK4 ([documentation officielle](https://www.gtk.org/docs/installations/)) :
-	* Fedora :
+
+* Fedora :
 ```sh
 sudo dnf install gtk4-devel
 ```
 
-	* Ubuntu/Debian :
+* Ubuntu/Debian :
 ```sh
 sudo apt install libgtk-4-dev
 ```
 
-	* Arch :
+* Arch :
 ```sh
 sudo pacman -S gtk4
 ```
@@ -45,6 +46,7 @@ git clone https://gitlab.emse.fr/lucien.gheerbrant/algo-prog-projet-2.git
 
 3. Compiler le code depuis sa source : 
 ```sh
+cd algo-prog-projet-2
 make
 ```
 
@@ -55,21 +57,21 @@ make
 
 ## Utilisation
 
-![](img/empty.png)
+![1](img/empty.png)
 
 Commencez à taper directement ou cliquez sur le bouton avec l'icône loupe pour rechercher un mot.
 
-![](img/search.png)
+![2](img/search.png)
 
 Cliquez sur un des trois mots pour augmenter sa fréquence (il faut retaper le mot pour voir le chiffre fréquence monter).
 
 Cliquez sur le bouton avec l'icône ➕ pour ajouter un mot. Appuyez sur 'OK' Pour confirmer.
 
-![](img/Add-dialog.png)
+![3](img/Add-dialog.png)
 
 Redémarrer le programme et le nouveau mot apparaîtra.
 
-![](img/Add.png)
+![4](img/Add.png)
 
 ## Fonctionnement
 
