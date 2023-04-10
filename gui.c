@@ -34,7 +34,7 @@ static void show_add_word_dialog(GtkWidget *parent, gpointer user_data)
 	GtkWidget *dialog, *content_area, *entry;
 
 	// Create the dialog
-	dialog = gtk_dialog_new_with_buttons("Enter a word",
+	dialog = gtk_dialog_new_with_buttons("Ajout",
 		  GTK_WINDOW(parent),
 		  GTK_DIALOG_MODAL | GTK_DIALOG_USE_HEADER_BAR,
 		  "_OK",
