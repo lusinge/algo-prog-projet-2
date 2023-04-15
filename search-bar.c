@@ -1,14 +1,12 @@
-/*
- * This code is in the major part taken and inspired from
+/* This code is in the major part taken and inspired from
  * https://gitlab.gnome.org/GNOME/gtk/-/blob/main/examples/
- * I added a button to make the whole thing more intuitive.
+ * I modified the search bar example, and learned how to use GTK in full C from it.
  */
-
 #include "gui.h"
 
 int main(int argc, char *argv[])
 {
-	AppData data;
+	AppData* data;
 	const char* dictionaryFileName;
 	char** suggestions;
 	unsigned int n;
@@ -16,18 +14,28 @@ int main(int argc, char *argv[])
 
 	dictionaryFileName = "mots_courants.txt";
 
-	data.hashTab = (HashTable*) malloc(sizeof(HashTable));
-	initializeHashTable(data.hashTab);
-	loadDictionaryFromFile(data.hashTab, dictionaryFileName);
+	data = (AppData*) malloc(sizeof(AppData));
+	data->hashTab = (HashTable*) malloc(sizeof(HashTable));
+	printf("hashTab: %p, size: %lu, nbOccupiedEntries: %u, nbElements: %u\n",
+       (void *)data->hashTab, data->hashTab->size, data->hashTab->nbOccupiedEntries, data->hashTab->nbElements);
+	initializeHashTable(data->hashTab);
+	loadDictionaryFromFile(data->hashTab, dictionaryFileName);
 
 	dictionaryFileName = "francais.txt";
-	loadDictionaryFromFile(data.hashTab, dictionaryFileName);
+	loadDictionaryFromFile(data->hashTab, dictionaryFileName);
 
-	search_window(argc, argv, &data);
+	printf("hashTab: %p, size: %lu, nbOccupiedEntries: %u, nbElements: %u\n",
+       (void *)data->hashTab, data->hashTab->size, data->hashTab->nbOccupiedEntries, data->hashTab->nbElements);
 
-	printf("Final search text: %s\n", data.search_text);
+	search_window(argc, argv, data);
 
-	free(data.hashTab);
+	insertElementToHashTable(data->hashTab, "WHY");
+	updateLocalDictionnary("WHY", "mots_courants.txt");
+
+	printf("Final search text: %s\n", data->search_text);
+
+	free(data->hashTab);
+	free(data);
 
 	return 0;
 }
