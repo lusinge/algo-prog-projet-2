@@ -54,3 +54,9 @@ dkms.conf
 # My files
 
 main.c
+
+tmp
+
+README.pdf
+
+mots_courants.txt
