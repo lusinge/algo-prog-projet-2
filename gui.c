@@ -287,7 +287,7 @@ int search_window(int argc, char *argv[], AppData *data)
 	return g_application_run(G_APPLICATION(data->app), argc, argv);
 }
 
-void removeWord(HashTable* hashTab; char* word, char* file_name)
+void removeWord(HashTable* hashTab, char* word, char* file_name)
 {
 	FILE* fd;
 	FILE* ftmp;
@@ -307,7 +307,7 @@ void removeWord(HashTable* hashTab; char* word, char* file_name)
 		//on rééecrit le dico sans le mot voulu.
 		fd = fopen(file_name, "w");
 		ftmp = fopen("tmp", "r");
-		tmp_word = "";
+		strcpy(tmp_word, "");
 		while( fscanf(ftmp, "%s", tmp_word) != EOF )
 			fprintf(fd,"%s\n", tmp_word);
 
