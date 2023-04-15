@@ -39,4 +39,7 @@ void initializeHashTable(HashTable* hashTab);
 bool checkExistenceWordInDictionary(HashTable* hashTab, char* word);
 void findTopThreeWordsWithPrefix(HashTable* hashTab, const char* prefix, TopWord topThreeWords[3]);
 void updateLocalDictionnary(char* word, const char* dictionaryFileName);
-bool removeElementFromHashTable(HashTable* hashTab, char* word);
+int removeElementFromHashTable(HashTable *hashTab, char *word);
+bool editElementFromHashTable(HashTable *hashTab, char *word, char *new_word);
+int removeWord(HashTable* hashTab, char* word, char* file_name);
+void editWord(HashTable* hashTab, char* old_word, char* new_word, char* file_name);

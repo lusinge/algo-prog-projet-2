@@ -21,4 +21,5 @@ static void show_add_word_dialog(gpointer user_data);
 static void on_add_word_dialog_response(GtkDialog *dialog, gint response, gpointer user_data);
 static void on_remove_word_dialog_response(GtkDialog *dialog, gint response_id, gpointer user_data);
 static void show_remove_word_dialog(gpointer user_data);
-void removeWord(HashTable* hashTab, char* word, char* file_name);
+static void show_edit_word_dialog(gpointer user_data);
+static void on_edit_word_dialog_response(GtkDialog *dialog, gint response_id, gpointer user_data);

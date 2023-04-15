@@ -1,57 +1,56 @@
 # algo-prog-projet-2
 
 ## Algorithme et Programmation II
-### Projet : Saisie Intuitive
 
-La saisie intuitive ou prédictive (de l’anglais predictive text) est une
-technologie conçue afin de faciliter la frappe de texte sur les claviers
-téléphoniques ou tablettes. Un exemple éloquent d’une telle technologie est le
-T9, abréviation de text on 9 keys.
+### Fichiers fournis :
 
-Développer une application capable de supporter les deux options classiques de
-la saisie prédictive: (i) la saisie automatique, et (ii) l’acquisition de mots.
+* gui.\* : Code contenant l'interface graphique
 
+* hash.\* : Code contenant toutes les fonctions qui gèrent la table de hachage
 
+* text.* : Quelques fonctions qui modifie le texte entré, pour qu'il y ait le moins d'erreur possible.
 
-### Interface graphique
+* mots_courants.txt : Sert de dictionnaire de prédiction.
 
-L'UI a été faite avec GTK4 (de la fondation GNOME) et leur librairie C.
+* francais.txt : Dictionnaire de français, permettant de suggerer des mots s'il y en n'a pas de compatible dans mots_courants.txt.
 
-J'ai (Lucien) toujours voulu essayé de faire une application GTK, donc j'ai sauté sur l'occasion.
 
 ## Installation
 1. installer les dépendances GTK4 ([documentation officielle](https://www.gtk.org/docs/installations/)) :
 
 * Fedora :
-```sh
+
+```
 sudo dnf install gtk4-devel
 ```
 
 * Ubuntu/Debian :
-```sh
+
+```
 sudo apt install libgtk-4-dev
 ```
 
 * Arch :
-```sh
+
+```
 sudo pacman -S gtk4
 ```
 
 Pour Windows et MacOS, voir la [documentation](https://www.gtk.org/docs/installations/). Nous n'avons pas essayé de compiler sur ces OS. Nous ne savons pas si le make et ses flags vont fonctionner.
 
-2. Cloner le dépôt :
-```sh
+2. Si ce n'est pas déjà fait, cloner le dépôt :
+```
 git clone https://gitlab.emse.fr/lucien.gheerbrant/algo-prog-projet-2.git
 ```
 
 3. Compiler le code depuis sa source : 
-```sh
+```
 cd algo-prog-projet-2
 make
 ```
 
 4. Exécuter le code : 
-```sh
+```
 ./search-bar.out
 ```
 
@@ -63,28 +62,30 @@ Commencez à taper directement ou cliquez sur le bouton avec l'icône loupe pour
 
 ![2](img/search.png)
 
-Cliquez sur un des trois mots pour augmenter sa fréquence (il faut retaper le mot pour voir le chiffre fréquence monter).
-
 Cliquez sur le bouton avec l'icône ➕ pour ajouter un mot. Appuyez sur 'OK' Pour confirmer.
 
 ![3](img/Add-dialog.png)
 
-Redémarrer le programme et le nouveau mot apparaîtra.
+Rafraîchissez la fenêtre en tapant n'importe quelle lettre. Le mot apparaîtra.
 
 ![4](img/Add.png)
 
-## Fonctionnement
+Pour modifier la fréquence d'un mot, il suffit de cliquer dessus. L'affichage se mettra à jour en tapant n'importe quelle lettre.
 
-Le dictionnaire complet et le dictionnaire local (mots_courants.txt) sont chargés dans une table de hachage.
+![5](img/frq.png)
 
-A chaque mot est associé une variable fréquence frq.
+Pour éditer un mot, appuyez sur l'icône crayon.
 
-A chaque fois qu'on essaie d'ajouter un mot dans la table, on regarde s'il n'est pas déjà dedans. S'il ne l'est pas, on l'ajoute avec une fréquence de 1. Sinon on incrémente cette fréquence.
+![6](img/Edit-dialog.png)
 
-Les mots qui ne sont pas dans le dictionnaire local ont donc une fréquence de 1. Ceux qui le sont ont une fréquence d'au moins 2 (On peut alors les différencier comme ça).
+Le nouveau mot remplacera l'ancien mot, en gardant sa fréquence.
 
-Lorsque l'on tape des lettres dans la barre de recherche, que l'on associe sous forme de préfixe, on regarde s'il y a des mots avec ce même préfixe (avec un strcomp sur le début du mot) dans la table en la parcourant entièrement: Ce sont des suggestions. On ne garde que 3 suggestions, qui sont celles avec les plus grandes fréquences.
+![7](img/Edit.png)
 
-Si on clique sur une suggestion, on augmente sa fréquence et on le rajoute à la fin du dictionnaire local, pour augmenter sa fréquence lorsque l'application est relancée une autre fois.
+Cliquez sur le bouton avec l'icône ➖ pour supprimer un mot. Appuyez sur 'OK' Pour confirmer.
 
-De même, lorsqu'on rajoute un mot, on le place à la fin du dictionnaire local.
+![8](img/Deleted-dialog.png)
+
+Mettez à jour la fenêtre : le mot a disparu !
+
+![9](img/Delete.png)

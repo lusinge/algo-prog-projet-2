@@ -9,9 +9,6 @@ void initializeHashTable(HashTable* hashTab)
 
 	for (unsigned int i = 0; i < hashTab->size; i++)
 		hashTab->Elements[i] = NULL;
-
-	printf("hashTab: %p, size: %lu, nbOccupiedEntries: %u, nbElements: %u\n",
-	   (void *)hashTab, hashTab->size, hashTab->nbOccupiedEntries, hashTab->nbElements);
 }
 
 
@@ -118,8 +115,6 @@ void findTopThreeWordsWithPrefix(HashTable* hashTab, const char* prefix, TopWord
 		topThreeWords[i].word[0] = '\0';
 		topThreeWords[i].frq = 0;
 	}
-	printf("hashTab: %p, size: %lu, nbOccupiedEntries: %u, nbElements: %u\n",
-       (void *)hashTab, hashTab->size, hashTab->nbOccupiedEntries, hashTab->nbElements);
 	for (unsigned int i = 0; i < hashTab->size; ++i) {
 		Element* currentElement = hashTab->Elements[i];
 
@@ -162,12 +157,12 @@ void updateLocalDictionnary(char* word, const char* dictionaryFileName)
 		printf("File not found.");
 }
 
-bool removeElementFromHashTable(HashTable *hashTab, char *word)
+int removeElementFromHashTable(HashTable *hashTab, char *word)
 {
 	unsigned long i = getHashValue(word);
+	unsigned int frq;
+
 	// Check if the index is within bounds
-	printf("hashTab: %p, size: %lu, nbOccupiedEntries: %u, nbElements: %u\n",
-	   (void *)hashTab, hashTab->size, hashTab->nbOccupiedEntries, hashTab->nbElements);
 	if (i >= hashTab->size) {
 		// If the index is out of bounds, return
 		return false;
@@ -187,10 +182,11 @@ bool removeElementFromHashTable(HashTable *hashTab, char *word)
 
 	if (!found) {
 		/* Word not found, return false */
-		return false;
+		return 0;
 	}
 
-	/* If found, remove the element from the hash table */
+	/* If found, remove the element from the hash table and return its frequency*/
+	frq = elem->frq;
 	if (prev == NULL) {
 		/* If this is the first element in the linked list */
 		hashTab->Elements[i] = elem->next;
@@ -210,5 +206,56 @@ bool removeElementFromHashTable(HashTable *hashTab, char *word)
 		hashTab->nbOccupiedEntries--;
 	}
 
-	return true;
+	return frq;
+}
+
+int removeWord(HashTable* hashTab, char* word, char* file_name)
+{
+	FILE* fd;
+	FILE* ftmp;
+	char tmp_word[MAX_WORD_LENGTH];
+	unsigned int frq;
+
+	fd = fopen(file_name, "r");
+
+	if (!fd) {
+		printf("\nFichier dictionnaire de prédiction non trouvé.\n");
+		return 0;
+	}
+	else {
+		//copie du dico de prédiction sans le mot qui va être supprimé.
+		ftmp = fopen("tmp", "w");
+		while( fscanf(fd, "%s", tmp_word) != EOF ) {
+			if (strcmp(tmp_word, word) != 0)
+				fprintf(ftmp,"%s\n", tmp_word);
+		}
+		fclose(fd);
+		fclose(ftmp);
+		//on réécrit le dico sans le mot voulu.
+		fd = fopen(file_name, "w");
+		ftmp = fopen("tmp", "r");
+		strcpy(tmp_word, "");
+		while( fscanf(ftmp, "%s", tmp_word) != EOF )
+			fprintf(fd,"%s\n", tmp_word);
+		frq = removeElementFromHashTable(hashTab, word);
+		if (frq == 0)
+			printf("\nErreur : Mot non trouvé dans la table de hachage.\n");
+		fclose(ftmp);
+	}
+	fclose(fd);
+	return frq;
+}
+
+void editWord(HashTable* hashTab, char* old_word, char* new_word, char* file_name)
+{
+	int frq = removeWord(hashTab, old_word, file_name);
+	if (frq != 0) {
+		for (int i = 0; i < frq; i++) {
+			insertElementToHashTable(hashTab, new_word);
+			updateLocalDictionnary(new_word, file_name);
+			printf("\n%s has been replaced by %s\n", old_word, new_word);
+		}
+	}
+	else
+		printf("\n%s non trouvé\n", old_word);
 }

@@ -24,6 +24,7 @@ static void activate_cb(GtkApplication *app, gpointer user_data)
 	GtkWidget *search_button;
 	GtkWidget *plus_button;
 	GtkWidget *minus_button;
+	GtkWidget *edit_button;
 
 	// Create the application window
 	data->window = gtk_application_window_new(app);
@@ -91,6 +92,12 @@ static void activate_cb(GtkApplication *app, gpointer user_data)
 	gtk_widget_set_valign(minus_button, GTK_ALIGN_CENTER);
 	gtk_header_bar_pack_start(GTK_HEADER_BAR(header_bar), minus_button);
 	g_signal_connect_swapped(minus_button, "clicked", G_CALLBACK(show_remove_word_dialog), data);
+
+	// Add an edit button to the header bar for editing an existing word
+	edit_button = gtk_button_new_from_icon_name("document-edit-symbolic");
+	gtk_widget_set_valign(edit_button, GTK_ALIGN_CENTER);
+	gtk_header_bar_pack_start(GTK_HEADER_BAR(header_bar), edit_button);
+	g_signal_connect_swapped(edit_button, "clicked", G_CALLBACK(show_edit_word_dialog), data);
 }
 
 // This function is called when the search button is clicked
@@ -180,20 +187,20 @@ static void on_row_activated(GtkListBox *list_box, GtkListBoxRow *row, gpointer 
 // This function displays a "Enter a word" dialog
 static void show_add_word_dialog(gpointer user_data)
 {
-    AppData *data = (AppData *) user_data;
+	AppData *data = (AppData *) user_data;
 
-    // Declare the widgets for the dialog
-    GtkWidget *dialog, *content_area, *entry;
+	// Declare the widgets for the dialog
+	GtkWidget *dialog, *content_area, *entry;
 
-    // Create the dialog
-    dialog = gtk_dialog_new_with_buttons("Suppression",
-                                          GTK_WINDOW(data->window),
-                                          GTK_DIALOG_MODAL | GTK_DIALOG_USE_HEADER_BAR,
-                                          "_OK",
-                                          GTK_RESPONSE_OK,
-                                          "_Cancel",
-                                          GTK_RESPONSE_CANCEL,
-                                          NULL);
+	// Create the dialog
+	dialog = gtk_dialog_new_with_buttons("Ajout",
+										  GTK_WINDOW(data->window),
+										  GTK_DIALOG_MODAL | GTK_DIALOG_USE_HEADER_BAR,
+										  "_OK",
+										  GTK_RESPONSE_OK,
+										  "_Cancel",
+										  GTK_RESPONSE_CANCEL,
+										  NULL);
 
 	// Get the content area of the dialog
 	content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
@@ -213,20 +220,20 @@ static void show_add_word_dialog(gpointer user_data)
 // This function displays a "Remove a word" dialog
 static void show_remove_word_dialog(gpointer user_data)
 {
-    AppData *data = (AppData *) user_data;
+	AppData *data = (AppData *) user_data;
 
-    // Declare the widgets for the dialog
-    GtkWidget *dialog, *content_area, *entry;
+	// Declare the widgets for the dialog
+	GtkWidget *dialog, *content_area, *entry;
 
-    // Create the dialog
-    dialog = gtk_dialog_new_with_buttons("Suppression",
-                                          GTK_WINDOW(data->window),
-                                          GTK_DIALOG_MODAL | GTK_DIALOG_USE_HEADER_BAR,
-                                          "_OK",
-                                          GTK_RESPONSE_OK,
-                                          "_Cancel",
-                                          GTK_RESPONSE_CANCEL,
-                                          NULL);
+	// Create the dialog
+	dialog = gtk_dialog_new_with_buttons("Suppression",
+		  GTK_WINDOW(data->window),
+		  GTK_DIALOG_MODAL | GTK_DIALOG_USE_HEADER_BAR,
+		  "_OK",
+		  GTK_RESPONSE_OK,
+		  "_Cancel",
+		  GTK_RESPONSE_CANCEL,
+		  NULL);
 
 	// Get the content area of the dialog
 	content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
@@ -242,6 +249,52 @@ static void show_remove_word_dialog(gpointer user_data)
 
 	// Connect the response signal to the on_remove_word_dialog_response function
 	g_signal_connect(dialog, "response", G_CALLBACK(on_remove_word_dialog_response), data);
+
+	// Show the dialog
+	gtk_window_present(GTK_WINDOW(dialog));
+}
+
+// This function displays a "Edit a word" dialog
+static void show_edit_word_dialog(gpointer user_data)
+{
+	AppData *data = (AppData *) user_data;
+
+	// Declare the widgets for the dialog
+	GtkWidget *dialog, *content_area, *entry_old_word, *entry_new_word;
+
+	// Create the dialog
+	dialog = gtk_dialog_new_with_buttons("Edit Word",
+		  GTK_WINDOW(data->window),
+		  GTK_DIALOG_MODAL | GTK_DIALOG_USE_HEADER_BAR,
+		  "_OK",
+		  GTK_RESPONSE_OK,
+		  "_Cancel",
+		  GTK_RESPONSE_CANCEL,
+		  NULL);
+
+	// Get the content area of the dialog
+	content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+	// Create entry widgets
+	entry_old_word = gtk_entry_new();
+	entry_new_word = gtk_entry_new();
+
+	// Add labels for the entries
+	GtkWidget *label_old_word = gtk_label_new("Ancien mot:");
+	GtkWidget *label_new_word = gtk_label_new("Nouveau mot:");
+
+	// Add the entry widgets and labels to the content area
+	gtk_box_append(GTK_BOX(content_area), label_old_word);
+	gtk_box_append(GTK_BOX(content_area), entry_old_word);
+	gtk_box_append(GTK_BOX(content_area), label_new_word);
+	gtk_box_append(GTK_BOX(content_area), entry_new_word);
+
+	// Store the entry widgets in the dialog's user data
+	g_object_set_data(G_OBJECT(dialog), "old_word_entry", entry_old_word);
+	g_object_set_data(G_OBJECT(dialog), "new_word_entry", entry_new_word);
+
+	// Connect the response signal to the on_edit_word_dialog_response function
+	g_signal_connect(dialog, "response", G_CALLBACK(on_edit_word_dialog_response), data);
 
 	// Show the dialog
 	gtk_window_present(GTK_WINDOW(dialog));
@@ -299,35 +352,31 @@ static void on_remove_word_dialog_response(GtkDialog *dialog, gint response_id, 
 	gtk_window_destroy(GTK_WINDOW(dialog));
 }
 
-void removeWord(HashTable* hashTab, char* word, char* file_name)
+static void on_edit_word_dialog_response(GtkDialog *dialog, gint response_id, gpointer user_data)
 {
-	FILE* fd;
-	FILE* ftmp;
-	char tmp_word[MAX_WORD_LENGTH];
+	// Get a pointer to the application data
+	AppData *data;
 
-	fd = fopen(file_name, "r");
+	// Declare a buffer for the entered words
+	char old_word[MAX_WORD_LENGTH];
+	char new_word[MAX_WORD_LENGTH];
 
-	if (!fd)
-		printf("\nFichier dictionnaire de prédiction non trouvé.\n");
-	else {
-		//copie du dico de prédiction sans le mot qui va être supprimé.
-		ftmp = fopen("tmp", "w");
-		while( fscanf(fd, "%s", tmp_word) != EOF ) {
-			if (strcmp(tmp_word, word) != 0)
-				fprintf(ftmp,"%s\n", tmp_word);
-		}
-		fclose(fd);
-		fclose(ftmp);
-		//on réécrit le dico sans le mot voulu.
-		fd = fopen(file_name, "w");
-		ftmp = fopen("tmp", "r");
-		strcpy(tmp_word, "");
-		while( fscanf(ftmp, "%s", tmp_word) != EOF )
-			fprintf(fd,"%s\n", tmp_word);
-		bool isRemoved = removeElementFromHashTable(hashTab, word);
-		if(!isRemoved)
-			printf("\nErreur : Mot non trouvé dans la table de hachage.\n");
-		fclose(ftmp);
+	// Check if the user pressed the OK button
+	if (response_id == GTK_RESPONSE_OK) {
+		// Cast the user_data pointer to AppData*
+		data = (AppData *)user_data;
+
+		// Get the word_entry widget from the dialog's user data
+		GtkWidget *entry_old_word = g_object_get_data(G_OBJECT(dialog), "old_word_entry");
+		GtkWidget *entry_new_word = g_object_get_data(G_OBJECT(dialog), "new_word_entry");
+
+		// Copy the text from the widget into the buffer
+		strcpy(old_word, cut_str((char *) gtk_editable_get_text(GTK_EDITABLE(entry_old_word))));
+		strcpy(new_word, cut_str((char *) gtk_editable_get_text(GTK_EDITABLE(entry_new_word))));
+
+		editWord(data->hashTab, old_word, new_word, "mots_courants.txt");
 	}
-	fclose(fd);
+
+	// Destroy the dialog
+	gtk_window_destroy(GTK_WINDOW(dialog));
 }

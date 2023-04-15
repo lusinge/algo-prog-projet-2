@@ -16,16 +16,12 @@ int main(int argc, char *argv[])
 
 	data = (AppData*) malloc(sizeof(AppData));
 	data->hashTab = (HashTable*) malloc(sizeof(HashTable));
-	printf("hashTab: %p, size: %lu, nbOccupiedEntries: %u, nbElements: %u\n",
-       (void *)data->hashTab, data->hashTab->size, data->hashTab->nbOccupiedEntries, data->hashTab->nbElements);
+
 	initializeHashTable(data->hashTab);
 	loadDictionaryFromFile(data->hashTab, dictionaryFileName);
 
 	dictionaryFileName = "francais.txt";
 	loadDictionaryFromFile(data->hashTab, dictionaryFileName);
-
-	printf("hashTab: %p, size: %lu, nbOccupiedEntries: %u, nbElements: %u\n",
-       (void *)data->hashTab, data->hashTab->size, data->hashTab->nbOccupiedEntries, data->hashTab->nbElements);
 
 	search_window(argc, argv, data);
 
