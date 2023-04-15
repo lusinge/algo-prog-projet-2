@@ -43,7 +43,7 @@ static void on_remove_word_dialog_response(GtkDialog *dialog, gint response_id, 
 		// Copy the text from the widget into the buffer
 		strcpy(word, cut_str((char *) gtk_editable_get_text(GTK_EDITABLE(entry))));
 		// Insert the word into the hash table and update the local dictionary
-		removeLocalDictionnary(word, "mots_courants.txt");
+		removeWord(data->hashTab, word, "mots_courants.txt");
 		printf("Supprimé: %s\n", word);
 	}
 
@@ -287,4 +287,30 @@ int search_window(int argc, char *argv[], AppData *data)
 	return g_application_run(G_APPLICATION(data->app), argc, argv);
 }
 
-void removeLocalDictionnary(char* word, char* file_name){}
+void removeWord(HashTable* hashTab; char* word, char* file_name)
+{
+	FILE* fd;
+	FILE* ftmp;
+	char tmp_word[MAX_WORD_LENGTH];
+
+	fd = fopen(file_name, "r");
+
+	if (!fd)
+		printf("\nFichier dictionnaire de prédiction non trouvé.\n");
+	else {
+		//copie du dico de prédiction sans le mot qui va être supprimé.
+		ftmp = fopen("tmp", "w");
+		while( fscanf(fd, "%s", tmp_word) != EOF ) {
+			if (strcmp(tmp_word, word) != 0)
+				fprintf(ftmp,"%s\n", tmp_word);
+		}
+		//on rééecrit le dico sans le mot voulu.
+		fd = fopen(file_name, "w");
+		ftmp = fopen("tmp", "r");
+		tmp_word = "";
+		while( fscanf(ftmp, "%s", tmp_word) != EOF )
+			fprintf(fd,"%s\n", tmp_word);
+
+	}
+
+}

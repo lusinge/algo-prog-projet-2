@@ -18,4 +18,4 @@ static void on_add_word_dialog_response(GtkDialog *dialog, gint response_id, gpo
 static void on_remove_word_dialog_response(GtkDialog *dialog, gint response_id, gpointer user_data);
 static void show_add_word_dialog(GtkWidget *parent, gpointer user_data);
 static void show_remove_word_dialog(GtkWidget *parent, gpointer user_data);
-void removeLocalDictionnary(char* word, char* file_name);
+void removeWord(HashTable* hashTab, char* word, char* file_name);
